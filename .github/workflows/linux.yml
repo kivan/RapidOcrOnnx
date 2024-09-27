@@ -32,7 +32,7 @@ jobs:
 
     env:
       TOOLCHAIN_VERSION: 20231224
-      ONNX_VERSION: 1.15.1
+      ONNX_VERSION: v1.15.1
       ONNX_PKG_NAME: onnxruntime-1.15.1-${{ matrix.arch_type }}-static
       CV_VERSION: 4.8.1
       CV_PKG_NAME: opencv-4.8.1-${{ matrix.arch_type }}
