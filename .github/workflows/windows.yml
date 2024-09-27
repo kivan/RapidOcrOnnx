@@ -20,7 +20,7 @@ jobs:
     name: windows-${{ matrix.list.vs_name }}
 
     env:
-      ONNX_VERSION: 1.15.1
+      ONNX_VERSION: v1.15.1
       ONNX_PKG_NAME: onnxruntime-1.15.1-windows-${{ matrix.list.vs_name }}-static-mt
       CV_VERSION: 4.8.1
       CV_PKG_NAME: opencv-4.8.1-windows-${{ matrix.list.vs_name }}-mt
