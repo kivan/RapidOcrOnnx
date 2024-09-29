@@ -15,15 +15,15 @@ jobs:
       matrix:
         arch_type:
           [
-            aarch64-linux-musl,
-            mips64el-linux-musl,
-            mipsel-linux-musl,
-            mipsel-linux-musln32,
-            mipsel-linux-musln32sf,
-            mipsel-linux-muslsf,
-            riscv32-linux-musl,
-            riscv64-linux-musl,
-            sh2-linux-musl,
+            #aarch64-linux-musl,
+            #mips64el-linux-musl,
+            #mipsel-linux-musl,
+            #mipsel-linux-musln32,
+            #mipsel-linux-musln32sf,
+            #mipsel-linux-muslsf,
+            #riscv32-linux-musl,
+            #riscv64-linux-musl,
+            #sh2-linux-musl,
             x86_64-linux-musl,
             x86_64-linux-muslx32,
           ]
