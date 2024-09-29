@@ -31,7 +31,7 @@ jobs:
     name: ${{ matrix.arch_type }}
 
     env:
-      TOOLCHAIN_VERSION: 20231224
+      TOOLCHAIN_VERSION:  14.1.0
       ONNX_VERSION: 1.15.1
       ONNX_PKG_NAME: onnxruntime-v1.15.1-${{ matrix.arch_type }}-static
       CV_VERSION: 4.8.1
