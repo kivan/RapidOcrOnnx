@@ -6,18 +6,28 @@
 #include "OcrResultUtils.h"
 #include "OcrUtils.h"
 
-static OcrLite *ocrLite;
+#define OCR_SIZE 13
+
+static OcrLite *ocrLiteArray[OCR_SIZE] = {};
 
 JNIEXPORT jint JNICALL
 JNI_OnLoad(JavaVM *vm, void *reserved) {
-    ocrLite = new OcrLite();
+    //ocrLite = new OcrLite();
+    for(int i=0; i<OCR_SIZE; i++) {
+        ocrLiteArray[i] = new OcrLite();
+    }
     return JNI_VERSION_1_4;
 }
 
 JNIEXPORT void JNICALL
 JNI_OnUnload(JavaVM *vm, void *reserved) {
     //printf("JNI_OnUnload\n");
-    delete ocrLite;
+    for(int i=0; i<OCR_SIZE; i++) {
+        if(ocrLiteArray[i] != NULL) {
+            delete ocrLiteArray[i];
+            ocrLiteArray[i] = NULL;
+        }
+    }
 }
 
 #ifdef _WIN32
@@ -65,22 +75,25 @@ Java_com_benjaminwan_ocrlibrary_OcrEngine_getVersion(JNIEnv *env, jobject thiz) 
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
-Java_com_benjaminwan_ocrlibrary_OcrEngine_setNumThread(JNIEnv *env, jobject thiz, jint numThread) {
+Java_com_benjaminwan_ocrlibrary_OcrEngine_setNumThread(JNIEnv *env, jobject thiz, jint idx, jint numThread) {
+    OcrLite *ocrLite = ocrLiteArray[idx];
     ocrLite->setNumThread(numThread);
     printf("numThread=%d\n", numThread);
     return JNI_TRUE;
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_benjaminwan_ocrlibrary_OcrEngine_initLogger(JNIEnv *env, jobject thiz, jboolean isConsole,
+Java_com_benjaminwan_ocrlibrary_OcrEngine_initLogger(JNIEnv *env, jobject thiz, jint idx, jboolean isConsole,
                                                      jboolean isPartImg, jboolean isResultImg) {
+    OcrLite *ocrLite = ocrLiteArray[idx];
     ocrLite->initLogger(isConsole,//isOutputConsole
                         isPartImg,//isOutputPartImg
                         isResultImg);//isOutputResultImg
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_benjaminwan_ocrlibrary_OcrEngine_enableResultText(JNIEnv *env, jobject thiz, jstring input) {
+Java_com_benjaminwan_ocrlibrary_OcrEngine_enableResultText(JNIEnv *env, jobject thiz, jint idx, jstring input) {
+    OcrLite *ocrLite = ocrLiteArray[idx];
     std::string imgPath = jstringToChar(env, input);
     std::string imgDir = imgPath.substr(0, imgPath.find_last_of('/') + 1);
     std::string imgName = imgPath.substr(imgPath.find_last_of('/') + 1);
@@ -88,8 +101,9 @@ Java_com_benjaminwan_ocrlibrary_OcrEngine_enableResultText(JNIEnv *env, jobject 
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
-Java_com_benjaminwan_ocrlibrary_OcrEngine_initModels(JNIEnv *env, jobject thiz, jstring path,
+Java_com_benjaminwan_ocrlibrary_OcrEngine_initModels(JNIEnv *env, jobject thiz, jint idx, jstring path,
                                                      jstring det, jstring cls, jstring rec, jstring keys) {
+    OcrLite *ocrLite = ocrLiteArray[idx];
     std::string modelsDir = jstringToChar(env, path);
     std::string detName = jstringToChar(env, det);
     std::string clsName = jstringToChar(env, cls);
@@ -126,11 +140,12 @@ Java_com_benjaminwan_ocrlibrary_OcrEngine_initModels(JNIEnv *env, jobject thiz, 
 }
 
 extern "C" JNIEXPORT jobject JNICALL
-Java_com_benjaminwan_ocrlibrary_OcrEngine_detect(JNIEnv *env, jobject thiz, jstring input, jint padding,
+Java_com_benjaminwan_ocrlibrary_OcrEngine_detect(JNIEnv *env, jobject thiz, jint idx, jstring input, jint padding,
                                                  jint maxSideLen,
                                                  jfloat boxScoreThresh, jfloat boxThresh, jfloat unClipRatio,
                                                  jboolean doAngle, jboolean mostAngle
 ) {
+    OcrLite *ocrLite = ocrLiteArray[idx];
     std::string imgPath = jstringToChar(env, input);
     bool hasTargetImgFile = isFileExists(imgPath);
     if (!hasTargetImgFile) {
@@ -147,11 +162,12 @@ Java_com_benjaminwan_ocrlibrary_OcrEngine_detect(JNIEnv *env, jobject thiz, jstr
 }
 
 extern "C" JNIEXPORT jobject JNICALL
-Java_com_benjaminwan_ocrlibrary_OcrEngine_detectInput(JNIEnv *env, jobject thiz, jobject input, jint padding,
+Java_com_benjaminwan_ocrlibrary_OcrEngine_detectInput(JNIEnv *env, jobject thiz, jint idx, jobject input, jint padding,
                                                               jint maxSideLen,
                                                               jfloat boxScoreThresh, jfloat boxThresh, jfloat unClipRatio,
                                                               jboolean doAngle, jboolean mostAngle
 ) {
+    OcrLite *ocrLite = ocrLiteArray[idx];
     jclass ocrInputClass = env->GetObjectClass(input);
     jfieldID dataFieldId = env->GetFieldID(ocrInputClass, "data", "[B");
     jbyteArray javaDataArray = (jbyteArray) env->GetObjectField(input, dataFieldId);
