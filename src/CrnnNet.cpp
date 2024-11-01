@@ -87,7 +87,7 @@ void CrnnNet::initModel(const std::string &pathStr, const std::string &keysPath)
     }
     keys.insert(keys.begin(), "#");
     keys.emplace_back(" ");
-    printf("total keys size(%lu)\n", keys.size());
+    //printf("total keys size(%lu)\n", keys.size());
 }
 
 template<class ForwardIterator>
